@@ -77,114 +77,110 @@
 ## 📁 프로젝트 구조
 
 ```mermaid
+graph LR
+    subgraph "Presentation Layer"
+        A1[Controller<br/>View 반환]
+        A2[RestController<br/>JSON 반환]
+    end
+    
+    subgraph "Business Layer"
+        B1[BO<br/>Business Object]
+    end
+    
+    subgraph "Data Access Layer"
+        C1[Mapper<br/>MyBatis]
+        C2[Repository<br/>JPA]
+    end
+    
+    subgraph "Domain Layer"
+        D1[Entity<br/>Domain Object]
+    end
+    
+    A1 --> B1
+    A2 --> B1
+    B1 --> C1
+    B1 --> C2
+    C1 --> D1
+    C2 --> D1
+    
+    style A1 fill:#e1f5ff
+    style A2 fill:#e1f5ff
+    style B1 fill:#fff4e1
+    style C1 fill:#ffe1f5
+    style C2 fill:#ffe1f5
+    style D1 fill:#e1ffe1
+```
+
+### 모듈 구조
+
+```mermaid
 graph TB
-    A[keyboardSBA] --> B[src/main/java/com/keyboardsba]
-    B --> C[admin/]
-    B --> D[alert/]
-    B --> E[auction/]
-    B --> F[chat/]
-    B --> G[common/]
-    B --> H[config/]
-    B --> I[item/]
-    B --> J[kakao/]
-    B --> K[post/]
-    B --> L[user/]
-    B --> M[aop/]
-    B --> N[Interceptor/]
+    A[keyboardSBA] --> B[Domain Modules]
+    A --> C[Common Modules]
+    A --> D[Infrastructure]
     
-    C --> C1[AdminController.java]
-    C --> C2[AdminRestController.java]
-    C --> C3[bo/AdminBO.java]
+    B --> B1[admin<br/>관리자]
+    B --> B2[alert<br/>신고]
+    B --> B3[auction<br/>경매]
+    B --> B4[chat<br/>채팅]
+    B --> B5[item<br/>상품]
+    B --> B6[kakao<br/>카카오 로그인]
+    B --> B7[post<br/>게시판]
+    B --> B8[user<br/>사용자]
     
-    D --> D1[AlertController.java]
-    D --> D2[AlertRestController.java]
-    D --> D3[bo/AlertBO.java]
-    D --> D4[domain/Alert.java]
-    D --> D5[mapper/AlertMapper.java]
+    C --> C1[common<br/>공통 유틸리티]
+    C --> C2[aop<br/>AOP]
+    C --> C3[Interceptor<br/>인터셉터]
+    C --> C4[config<br/>설정]
     
-    E --> E1[AuctionController.java]
-    E --> E2[AuctionRestController.java]
-    E --> E3[bo/AuctionBO.java]
-    E --> E4[domain/Auction.java]
-    E --> E5[mapper/AuctionMapper.java]
-    
-    F --> F1[ChatRestController.java]
-    F --> F2[bo/ChatBO.java]
-    F --> F3[domain/Chat.java]
-    F --> F4[mapper/ChatMapper.java]
-    
-    G --> G1[EncryptUtils.java]
-    G --> G2[FileManagerService.java]
-    
-    I --> I1[ItemController.java]
-    I --> I2[ItemRestController.java]
-    I --> I3[bo/ItemBO.java]
-    I --> I4[domain/Item.java]
-    I --> I5[mapper/ItemMapper.java]
-    
-    J --> J1[KakaoController.java]
-    J --> J2[bo/KakaoBO.java]
-    J --> J3[entity/KakaoTokenResponse.java]
-    J --> J4[entity/KakaoUser.java]
-    J --> J5[entity/User.java]
-    J --> J6[repository/KakaoRepository.java]
-    
-    K --> K1[PostController.java]
-    K --> K2[PostRestController.java]
-    K --> K3[bo/PostBO.java]
-    K --> K4[domain/Post.java]
-    K --> K5[mapper/PostMapper.java]
-    
-    L --> L1[UserController.java]
-    L --> L2[UserRestController.java]
-    L --> L3[bo/UserBO.java]
-    L --> L4[entity/UserEntity.java]
-    L --> L5[repository/UserRepository.java]
-    
-    M --> M1[TimeTraceAop.java]
-    N --> N1[PermissionInterceptor.java]
+    D --> D1[resources<br/>설정/템플릿]
     
     style A fill:#e1f5ff
-    style B fill:#fff4e1
-    style C fill:#ffe1f5
-    style D fill:#ffe1f5
-    style E fill:#ffe1f5
-    style F fill:#ffe1f5
-    style G fill:#e1ffe1
-    style I fill:#ffe1f5
-    style J fill:#ffe1f5
-    style K fill:#ffe1f5
-    style L fill:#ffe1f5
+    style B fill:#ffe1f5
+    style C fill:#fff4e1
+    style D fill:#e1ffe1
+```
+
+### 각 모듈의 표준 구조
+
+각 도메인 모듈(admin, alert, auction, chat, item, post, user)은 다음과 같은 구조를 따릅니다:
+
+```
+{module}/
+├── {Module}Controller.java      # View 반환 컨트롤러
+├── {Module}RestController.java   # JSON 반환 REST 컨트롤러
+├── bo/
+│   └── {Module}BO.java          # 비즈니스 로직
+├── domain/
+│   └── {Module}.java             # 도메인 객체
+└── mapper/
+    └── {Module}Mapper.java       # MyBatis 매퍼 인터페이스
 ```
 
 ### 디렉토리 구조
 
 ```
 keyboardSBA/
-├── src/
-│   ├── main/
-│   │   ├── java/com/keyboardsba/
-│   │   │   ├── admin/          # 관리자 기능
-│   │   │   ├── alert/          # 알림 기능
-│   │   │   ├── auction/        # 경매 기능
-│   │   │   ├── chat/           # 채팅 기능
-│   │   │   ├── common/         # 공통 유틸리티
-│   │   │   ├── config/         # 설정 파일
-│   │   │   ├── item/           # 상품 관리
-│   │   │   ├── kakao/          # 카카오 로그인
-│   │   │   ├── post/           # 게시판
-│   │   │   ├── user/           # 사용자 관리
-│   │   │   ├── aop/            # AOP 설정
-│   │   │   └── Interceptor/    # 인터셉터
-│   │   └── resources/
-│   │       ├── application.yml # 설정 파일
-│   │       ├── mappers/        # MyBatis 매퍼 XML
-│   │       ├── static/         # 정적 리소스
-│   │       └── templates/      # Thymeleaf 템플릿
-│   └── test/                   # 테스트 코드
-├── build.gradle                # Gradle 빌드 설정
-├── settings.gradle             # Gradle 프로젝트 설정
-└── README.md                   # 프로젝트 문서
+├── src/main/java/com/keyboardsba/
+│   ├── admin/          # 관리자 기능
+│   ├── alert/          # 신고 기능
+│   ├── auction/        # 경매 기능
+│   ├── chat/           # 채팅 기능
+│   ├── item/           # 상품 관리
+│   ├── kakao/          # 카카오 로그인
+│   ├── post/           # 게시판
+│   ├── user/           # 사용자 관리
+│   ├── common/         # 공통 유틸리티
+│   ├── config/         # 설정 파일
+│   ├── aop/            # AOP 설정
+│   └── Interceptor/    # 인터셉터
+├── src/main/resources/
+│   ├── application.yml # 설정 파일
+│   ├── mappers/        # MyBatis 매퍼 XML
+│   ├── static/         # 정적 리소스 (CSS, 이미지)
+│   └── templates/      # Thymeleaf 템플릿
+├── build.gradle        # Gradle 빌드 설정
+└── settings.gradle     # Gradle 프로젝트 설정
 ```
 
 ## 🗄 데이터베이스 설계
